@@ -33,6 +33,7 @@ def run_learning(source_train_loader, target_train_loader, prm, verbose=1):
     n_batches = len(source_train_loader)
 
     # get model:
+    global model
     model = get_model(prm)
 
     # post_model.set_eps_std(0.0) # DEBUG: turn off randomness
@@ -97,8 +98,8 @@ def run_learning(source_train_loader, target_train_loader, prm, verbose=1):
 
     # Update Log file
     update_file = not verbose == 0
-    cmn.write_to_log(cmn.get_model_string(model), prm, update_file=update_file)
-    cmn.write_to_log('Total number of steps: {}'.format(n_batches * prm.num_epochs), prm, update_file=update_file)
+    # cmn.write_to_log(cmn.get_model_string(model), prm, update_file=update_file)
+    # cmn.write_to_log('Total number of steps: {}'.format(n_batches * prm.num_epochs), prm, update_file=update_file)
     # cmn.write_to_log('Number of source training samples: {}\nNumber of target training samples: {}'.format(source_train_loader.dataset.X.shape[0],
     #                 source_train_loader.dataset.X.shape[0]), prm=prm, update_file=update_file)
 

@@ -22,6 +22,11 @@ def objective(trial, trial_prm):
     return learn.k_fold_reverse_validation(trial_prm)
 
 
+def callback(study, trial):
+    global best_model
+    if study.best_trial == trial:
+        best_model = model
+
 # -------------------------------------------------------------------------------------------
 #  Set Parameters
 # -------------------------------------------------------------------------------------------
@@ -56,7 +61,7 @@ parser.add_argument('--batch-size', type=int, help='input batch size for trainin
                     default=32)
 
 parser.add_argument('--num-epochs', type=int, help='number of epochs to train',
-                    default=10) # 300
+                    default=1) # 10
 
 parser.add_argument('--lr', type=float, help='learning rate (initial)',
                     default=1e-3)
@@ -115,8 +120,12 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)  # Setup the root logger.
 logger.addHandler(logging.FileHandler(get_log_path(prm), mode="a"))
 
+optuna.logging.enable_propagation()  # Propagate logs to the root logger.
+optuna.logging.disable_default_handler()  # Stop showing logs in stderr.
+
 objective_wrap = lambda trial: objective(trial, prm)
 study = optuna.create_study(sampler=optuna.samplers.GridSampler(search_space), direction='minimize')
 study.optimize(objective_wrap)
+torch.save(best_model.state_dict(),get_log_path(prm))
 
 # save_run_data(prm, {'test_err': test_err})
